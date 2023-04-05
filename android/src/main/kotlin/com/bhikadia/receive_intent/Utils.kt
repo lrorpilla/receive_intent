@@ -44,7 +44,6 @@ fun jsonToIntent(json: JSONObject): Intent = Intent().apply {
     putExtras(jsonToBundle(json))
 }
 
-
 fun bundleToJSON(bundle: Bundle): JSONObject {
     val json = JSONObject()
     val ks = bundle.keySet()
