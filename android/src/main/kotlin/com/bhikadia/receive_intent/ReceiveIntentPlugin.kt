@@ -54,13 +54,16 @@ class ReceiveIntentPlugin : FlutterPlugin, MethodCallHandler, EventChannel.Strea
         eventSink?.success(latestIntentMap)
     }
 
-    private fun setResult(result: Result, resultCode: Int?, data: String?, shouldFinish: Boolean?) {
+    private fun setResult(result: Result, resultCode: Int?, action: String?, data: String?, shouldFinish: Boolean?) {
         if (resultCode != null) {
             if (data == null) {
                 activity?.setResult(resultCode)
             } else {
                 val json = JSONObject(data)
-                activity?.setResult(resultCode, jsonToIntent(json))
+                val intent = Intent(action).apply {
+                    putExtras(jsonToBundle(json))
+                }
+                activity?.setResult(resultCode, intent)
             }
             if (shouldFinish ?: false) {
                 activity?.finish()
@@ -87,7 +90,7 @@ class ReceiveIntentPlugin : FlutterPlugin, MethodCallHandler, EventChannel.Strea
                 result.success(initialIntentMap)
             }
             "setResult" -> {
-                setResult(result, call.argument("resultCode"), call.argument("data"), call.argument("shouldFinish"))
+                setResult(result, call.argument("resultCode"), call.argument("action"), call.argument("data"), call.argument("shouldFinish"))
             }
             else -> {
                 result.notImplemented()
